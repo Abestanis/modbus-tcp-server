@@ -57,6 +57,10 @@ File a Issue if you've got a problem with that.
 
 # Change log
 
+## v0.5
+
+* _TBA_
+
 ## v0.4
 
 * added automatic connection termination after 60 seconds of inactivity
