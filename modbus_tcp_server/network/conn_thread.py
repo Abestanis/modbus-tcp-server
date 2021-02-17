@@ -53,5 +53,9 @@ class ConnectionThread(TerminableThread):
             msg = self.server.process_message(packet)
             b = bytes(msg)
             logger.debug('Sent %s', repr(b))
-            self.socket.sendall(b)
+            try:
+                self.socket.sendall(b)
+            except socket.timeout:
+                # Timeout on sendall means the client is extremely slow
+                raise socket.error()
             self.last_activity = time.monotonic()
