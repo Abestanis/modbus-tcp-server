@@ -12,6 +12,7 @@ class BaseDataSource(metaclass=ABCMeta):
         :raises IllegalValue: value was illegal
         :raises GatewayTargetDeviceFailedToRespond: gateway target device failed to respond
         :raises GatewayPathUnavailable: gateway path unavailable
+        :return: an int 0 >= x >= 65535
         """
 
     @abstractmethod
@@ -21,6 +22,7 @@ class BaseDataSource(metaclass=ABCMeta):
         :raises IllegalValue: value was illegal
         :raises GatewayTargetDeviceFailedToRespond: gateway target device failed to respond
         :raises GatewayPathUnavailable: gateway path unavailable
+        :return: an int 0 >= x >= 65535
         """
 
     @abstractmethod
@@ -44,6 +46,9 @@ class BaseDataSource(metaclass=ABCMeta):
     @abstractmethod
     def set_holding_register(self, unit_id: int, address: int, value: int) -> None:
         """
+        :param unit_id: Unit ID
+        :param address: address to write
+        :param value: an int 0 >= x >= 65535
         :raises IllegalAddress: address was illegal
         :raises IllegalValue: value was illegal
         :raises GatewayTargetDeviceFailedToRespond: gateway target device failed to respond
