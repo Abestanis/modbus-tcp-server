@@ -8,7 +8,7 @@ from ..datagrams import MODBUSTCPMessage
 from ..processor import ModbusProcessor
 
 
-class AcceptThread(TerminableThread):
+class ModbusTCPServer(TerminableThread):
     def __init__(self, bind_ifc: str, bind_port: int,
                  data_source: tp.Optional[BaseDataSource] = None,
                  backlog: int = 128):

@@ -12,6 +12,7 @@ class BaseDataSource(metaclass=ABCMeta):
         :raises IllegalValue: value was illegal
         :raises GatewayTargetDeviceFailedToRespond: gateway target device failed to respond
         :raises GatewayPathUnavailable: gateway path unavailable
+        :raises CustomMODBUSError: custom modbus error
         :return: an int 0 >= x >= 65535
         """
 
@@ -22,6 +23,7 @@ class BaseDataSource(metaclass=ABCMeta):
         :raises IllegalValue: value was illegal
         :raises GatewayTargetDeviceFailedToRespond: gateway target device failed to respond
         :raises GatewayPathUnavailable: gateway path unavailable
+        :raises CustomMODBUSError: custom modbus error
         :return: an int 0 >= x >= 65535
         """
 
@@ -32,6 +34,7 @@ class BaseDataSource(metaclass=ABCMeta):
         :raises IllegalValue: value was illegal
         :raises GatewayTargetDeviceFailedToRespond: gateway target device failed to respond
         :raises GatewayPathUnavailable: gateway path unavailable
+        :raises CustomMODBUSError: custom modbus error
         """
 
     @abstractmethod
@@ -41,6 +44,7 @@ class BaseDataSource(metaclass=ABCMeta):
         :raises IllegalValue: value was illegal
         :raises GatewayTargetDeviceFailedToRespond: gateway target device failed to respond
         :raises GatewayPathUnavailable: gateway path unavailable
+        :raises CustomMODBUSError: custom modbus error
         """
 
     @abstractmethod
@@ -53,6 +57,7 @@ class BaseDataSource(metaclass=ABCMeta):
         :raises IllegalValue: value was illegal
         :raises GatewayTargetDeviceFailedToRespond: gateway target device failed to respond
         :raises GatewayPathUnavailable: gateway path unavailable
+        :raises CustomMODBUSError: custom modbus error
         """
 
     @abstractmethod
@@ -62,4 +67,5 @@ class BaseDataSource(metaclass=ABCMeta):
         :raises IllegalValue: value was illegal
         :raises GatewayTargetDeviceFailedToRespond: gateway target device failed to respond
         :raises GatewayPathUnavailable: gateway path unavailable
+        :raises CustomMODBUSError: custom modbus error
         """

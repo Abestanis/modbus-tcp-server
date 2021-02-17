@@ -40,7 +40,7 @@ To implement a custom data provider, just extend
 to provide data of your choosing and launch it that way: 
 
 ```python
-from modbus_tcp_server.network import AcceptThread
+from modbus_tcp_server.network import ModbusTCPServer
 from modbus_tcp_server.data_source import BaseDataSource
 
 class CustomDB(BaseDataSource):
@@ -48,7 +48,7 @@ class CustomDB(BaseDataSource):
 
 c_db = CustomDB()
 
-at = AcceptThread('0.0.0.0', 502, c_db).start()
+at = ModbusTCPServer('0.0.0.0', 502, c_db).start()
 ```
 
 Note that since everything is handled in a single thread, 
@@ -59,7 +59,8 @@ File a Issue if you've got a problem with that.
 
 ## v0.3
 
-* _TBA_
+* added `CustomMODBUSError`
+* renamed `AcceptThread` to `ModbusTCPServer`
 
 ## v0.2
 

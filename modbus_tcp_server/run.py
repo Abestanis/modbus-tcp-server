@@ -2,7 +2,7 @@ import sys
 import logging
 from satella.os import hang_until_sig
 
-from modbus_tcp_server.network import AcceptThread
+from modbus_tcp_server.network import ModbusTCPServer
 
 
 def run():
@@ -39,7 +39,7 @@ modbus-tcp-server <name of interface to bind to> <optional port to bind to>
 
     logging.basicConfig(level=l_level)
 
-    at = AcceptThread(host, port).start()
+    at = ModbusTCPServer(host, port).start()
     hang_until_sig()
     at.terminate().join()
     sys.exit(0)
