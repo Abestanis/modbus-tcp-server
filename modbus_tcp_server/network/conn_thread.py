@@ -1,5 +1,6 @@
 import logging
 import socket
+import time
 
 from satella.coding import silence_excs
 from satella.coding.concurrent import TerminableThread
@@ -8,6 +9,8 @@ from ..datagrams import MODBUSTCPMessage
 from ..exceptions import InvalidFrame
 
 logger = logging.getLogger(__name__)
+
+MAX_TIME_WITHOUT_ACTIVITY = 60.0    # 60 seconds
 
 
 class ConnectionThread(TerminableThread):
@@ -19,6 +22,7 @@ class ConnectionThread(TerminableThread):
         self.socket.setblocking(True)
         self.socket.settimeout(5)
         self.buffer = bytearray()
+        self.last_activity = time.monotonic()
 
     def cleanup(self):
         self.socket.close()
@@ -27,6 +31,9 @@ class ConnectionThread(TerminableThread):
     def loop(self):
         # noinspection PyProtectedMember
         if self.server._terminating:
+            self.terminate()
+            return
+        if time.monotonic() - self.last_activity > MAX_TIME_WITHOUT_ACTIVITY:
             self.terminate()
             return
         data = self.socket.recv(128)
@@ -43,7 +50,7 @@ class ConnectionThread(TerminableThread):
                 del self.buffer[:len(packet)]
             except ValueError:
                 break
-
+            self.last_activity = time.monotonic()
             msg = self.server.process_message(packet)
             b = bytes(msg)
             logger.debug('Sent %s', repr(b))

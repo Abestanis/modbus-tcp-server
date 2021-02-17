@@ -59,7 +59,7 @@ File a Issue if you've got a problem with that.
 
 ## v0.4
 
-* _TBA_
+* added automatic connection termination after 60 seconds of inactivity
 
 ## v0.3
 
