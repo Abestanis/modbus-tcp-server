@@ -57,6 +57,10 @@ File a Issue if you've got a problem with that.
 
 # Change log
 
+## v0.4
+
+* _TBA_
+
 ## v0.3
 
 * added `CustomMODBUSError`
