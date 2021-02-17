@@ -57,6 +57,10 @@ File a Issue if you've got a problem with that.
 
 # Change log
 
+## v0.3
+
+* _TBA_
+
 ## v0.2
 
 * added support for commands 15 and 16
