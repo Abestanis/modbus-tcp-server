@@ -33,6 +33,8 @@ so only commands 1-6 and 15-16 are supported.
 Also, it spawns a thread per a client. This might be unacceptable to you,
 however it can also with with gevent.
 
+Client connections will be closed after 60 seconds of inactivity.
+
 # Custom data provider
 
 To implement a custom data provider, just extend
