@@ -1,10 +1,11 @@
+import logging
+import socket
+
 from satella.coding import silence_excs
 from satella.coding.concurrent import TerminableThread
-from ..exceptions import InvalidFrame
-import socket
-import logging
 
-from modbus_tcp_server.datagrams import MODBUSTCPMessage
+from ..datagrams import MODBUSTCPMessage
+from ..exceptions import InvalidFrame
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,6 @@
-import sys
 import logging
+import sys
+
 from satella.os import hang_until_sig
 
 from modbus_tcp_server.network import ModbusTCPServer

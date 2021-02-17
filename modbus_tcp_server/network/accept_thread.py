@@ -1,7 +1,9 @@
+import socket
 import typing as tp
+
 from satella.coding import silence_excs
 from satella.coding.concurrent import TerminableThread
-import socket
+
 from .conn_thread import ConnectionThread
 from ..data_source import BaseDataSource, TestingDataSource
 from ..datagrams import MODBUSTCPMessage

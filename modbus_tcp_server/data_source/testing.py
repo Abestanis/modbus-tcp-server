@@ -7,6 +7,7 @@ class TestingDataSource(BaseDataSource):
 
     Analog inputs and discrete inputs are always 0.
     """
+
     def __init__(self):
         self.holding_registers = {}
         self.coils = {}

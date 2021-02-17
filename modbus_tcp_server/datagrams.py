@@ -2,7 +2,7 @@ import struct
 
 from satella.coding import rethrow_as
 
-from modbus_tcp_server.exceptions import InvalidFrame
+from .exceptions import InvalidFrame
 
 STRUCT_HDR = struct.Struct('>HHHB')
 SHDR_SIZE = STRUCT_HDR.size
@@ -16,10 +16,11 @@ class MODBUSTCPMessage:
         self.data = data
 
     def __repr__(self):
-        return 'ModbusTCPMessage(TID=%s, UID=%s, data=%s)' % (self.tid, self.unit_id, repr(self.data))
+        return 'ModbusTCPMessage(TID=%s, UID=%s, data=%s)' % (
+        self.tid, self.unit_id, repr(self.data))
 
     def __bytes__(self):
-        return STRUCT_HDR.pack(self.tid, self.pid, len(self.data)+1, self.unit_id) + self.data
+        return STRUCT_HDR.pack(self.tid, self.pid, len(self.data) + 1, self.unit_id) + self.data
 
     def __len__(self) -> int:
         return SHDR_SIZE + len(self.data)
@@ -30,8 +31,8 @@ class MODBUSTCPMessage:
         tid, pid, length, uid = STRUCT_HDR.unpack(d[:SHDR_SIZE])
         if pid != 0x00:
             raise InvalidFrame('Protocol ID not 0')
-        data = d[SHDR_SIZE:SHDR_SIZE+length-1]
-        if len(data) < length-1:
+        data = d[SHDR_SIZE:SHDR_SIZE + length - 1]
+        if len(data) < length - 1:
             raise ValueError('Input data too short')
         return MODBUSTCPMessage(tid, pid, uid, data)
 
@@ -47,5 +48,4 @@ class MODBUSTCPMessage:
         if exception:
             return MODBUSTCPMessage(self.tid, 0, self.unit_id, bytes([self.data[0] & 0x80]) + data)
         else:
-            return MODBUSTCPMessage(self.tid, 0, self.unit_id, self.data[0:1]+data)
-
+            return MODBUSTCPMessage(self.tid, 0, self.unit_id, self.data[0:1] + data)

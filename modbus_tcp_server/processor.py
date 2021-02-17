@@ -1,13 +1,13 @@
-from .bits import BitStream, BitConsumer
-from modbus_tcp_server.data_source import BaseDataSource
-from modbus_tcp_server.datagrams import MODBUSTCPMessage
+import struct
+import weakref
+
 from satella.coding import rethrow_as
 
-from .exceptions import IllegalAddress, IllegalValue, InvalidFrame, \
-    GatewayTargetDeviceFailedToRespond, GatewayPathUnavailable, CustomMODBUSError
-import weakref
-import struct
-
+from modbus_tcp_server.data_source import BaseDataSource
+from modbus_tcp_server.datagrams import MODBUSTCPMessage
+from .bits import BitStream, BitConsumer
+from .exceptions import InvalidFrame, \
+    CustomMODBUSError
 
 STRUCT_HH = struct.Struct('>HH')
 STRUCT_HHB = struct.Struct('>HHB')
@@ -18,7 +18,7 @@ def read_holding_registers(db: BaseDataSource, unit_id: int, address_start: int,
     for address in range(address_start, address_start + amount):
         output.append(db.get_holding_register(unit_id, address))
     output_len = len(output)
-    return struct.pack('>H'+('H'*output_len), output_len*2, *output)
+    return struct.pack('>H' + ('H' * output_len), output_len * 2, *output)
 
 
 def read_analog_inputs(db: BaseDataSource, unit_id: int, address_start: int, amount: int):
@@ -26,7 +26,7 @@ def read_analog_inputs(db: BaseDataSource, unit_id: int, address_start: int, amo
     for address in range(address_start, address_start + amount):
         output.append(db.get_analog_input(unit_id, address))
     output_len = len(output)
-    return struct.pack('>H'+('H'*output_len), output_len*2, *output)
+    return struct.pack('>H' + ('H' * output_len), output_len * 2, *output)
 
 
 def read_coil(db: BaseDataSource, unit_id: int, address_start: int, amount: int):
@@ -55,12 +55,12 @@ def write_single_register(db: BaseDataSource, unit_id: int, address: int, value:
 
 def write_multiple_registers(db: BaseDataSource, unit_id: int, msg: MODBUSTCPMessage) -> bytes:
     address, amount, databytes, reg_data = STRUCT_HHB.unpack(msg.data[1:6]), msg.data[6:]
-    if databytes != 2*amount:
+    if databytes != 2 * amount:
         raise InvalidFrame('Mismatch between writing amount and no of bytes')
 
     with rethrow_as(struct.error, InvalidFrame):
-        for address, value in zip(range(address, address+amount),
-                                  struct.unpack('>'+('H'*amount), reg_data)):
+        for address, value in zip(range(address, address + amount),
+                                  struct.unpack('>' + ('H' * amount), reg_data)):
             db.set_holding_register(unit_id, address, value)
     return STRUCT_HH.pack(address, amount)
 
@@ -73,7 +73,7 @@ def write_multiple_coils(db: BaseDataSource, unit_id: int, msg: MODBUSTCPMessage
     if target_db != databytes:
         raise InvalidFrame('Mismatch between writing amount and no of bytes')
     stream = BitConsumer(msg.data[6:])
-    for address, value in zip(range(address, address+amount), stream):
+    for address, value in zip(range(address, address + amount), stream):
         db.set_coil(unit_id, address, value)
     return STRUCT_HH.pack(address, amount)
 
@@ -96,6 +96,10 @@ class ModbusProcessor:
     def __init__(self, server):
         self.server = weakref.proxy(server)
 
+    @property
+    def data_source(self) -> BaseDataSource:
+        return self.server.data_source
+
     def process(self, msg: MODBUSTCPMessage) -> MODBUSTCPMessage:
         """
         :raises InvalidFrame: invalid data frame
@@ -104,9 +108,10 @@ class ModbusProcessor:
             proc_fun, struct_inst = TRANSLATION_TABLE[msg.data[0]]
             if struct_inst is not None:
                 args = struct_inst.unpack(msg.data[1:])
-                return msg.respond(proc_fun(self.server.data_source, msg.unit_id, *args))
+                b = proc_fun(self.data_source, msg.unit_id, *args)
             else:
-                return msg.respond(proc_fun(self.server.data_source, msg.unit_id, msg))
+                b = proc_fun(self.data_source, msg.unit_id, msg)
+            return msg.respond(b)
         except KeyError:
             return msg.respond(b'\x01', True)
         except CustomMODBUSError as e:

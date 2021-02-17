@@ -5,6 +5,7 @@ class BaseDataSource(metaclass=ABCMeta):
     """
     A base class for all data sources
     """
+
     @abstractmethod
     def get_holding_register(self, unit_id: int, address: int) -> int:
         """
