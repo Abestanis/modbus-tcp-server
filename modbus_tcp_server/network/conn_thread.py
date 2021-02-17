@@ -29,15 +29,15 @@ class ConnectionThread(TerminableThread):
 
     @silence_excs(socket.timeout)
     def loop(self):
+        # Check for termination conditions
         # noinspection PyProtectedMember
         if self.server._terminating:
-            self.terminate()
-            return
+            raise socket.error()
         if time.monotonic() - self.last_activity > MAX_TIME_WITHOUT_ACTIVITY:
-            self.terminate()
-            return
-        data = self.socket.recv(128)
+            raise socket.error()
 
+        # Get the data
+        data = self.socket.recv(128)
         if not data:
             raise socket.error()
         logger.info('Received %s', repr(data))
@@ -47,11 +47,11 @@ class ConnectionThread(TerminableThread):
         while self.buffer:
             try:
                 packet = MODBUSTCPMessage.from_bytes(self.buffer)
-                del self.buffer[:len(packet)]
             except ValueError:
                 break
-            self.last_activity = time.monotonic()
+            del self.buffer[:len(packet)]
             msg = self.server.process_message(packet)
             b = bytes(msg)
             logger.debug('Sent %s', repr(b))
             self.socket.sendall(b)
+            self.last_activity = time.monotonic()
