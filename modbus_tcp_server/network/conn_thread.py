@@ -1,5 +1,6 @@
 from satella.coding import silence_excs
 from satella.coding.concurrent import TerminableThread
+from ..exceptions import InvalidFrame
 import socket
 import logging
 
@@ -10,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class ConnectionThread(TerminableThread):
     def __init__(self, sock, addr, server):
-        super().__init__(terminate_on=socket.error, daemon=True)
+        super().__init__(terminate_on=(socket.error, InvalidFrame), daemon=True)
         self.socket = sock
         self.server = server
         self.addr = addr
@@ -23,10 +24,12 @@ class ConnectionThread(TerminableThread):
 
     @silence_excs(socket.timeout)
     def loop(self):
+        # noinspection PyProtectedMember
         if self.server._terminating:
             self.terminate()
             return
-        data = self.socket.recv(256)
+        data = self.socket.recv(128)
+
         if not data:
             raise socket.error()
         logger.info('Received %s', repr(data))

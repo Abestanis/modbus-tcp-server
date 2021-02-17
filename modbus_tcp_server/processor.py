@@ -1,6 +1,10 @@
-from modbus_tcp_server.bits import BitStream
+from .bits import BitStream, BitConsumer
 from modbus_tcp_server.data_source import BaseDataSource
 from modbus_tcp_server.datagrams import MODBUSTCPMessage
+from satella.coding import rethrow_as
+
+from .exceptions import IllegalAddress, IllegalValue, InvalidFrame, \
+    GatewayTargetDeviceFailedToRespond, GatewayPathUnavailable
 import weakref
 import struct
 
@@ -48,6 +52,31 @@ def write_single_register(db: BaseDataSource, unit_id: int, address: int, value:
     return struct.pack('>HH', address, value)
 
 
+def write_multiple_registers(db: BaseDataSource, unit_id: int, msg: MODBUSTCPMessage) -> bytes:
+    address, amount, databytes, reg_data = struct.unpack('>HHB', msg.data[1:6]), msg.data[6:]
+    if databytes != 2*amount:
+        raise InvalidFrame('Mismatch between writing amount and no of bytes')
+
+    with rethrow_as(struct.error, InvalidFrame):
+        for address, value in zip(range(address, address+amount),
+                                  struct.unpack('>'+('H'*amount), reg_data)):
+            db.set_holding_register(unit_id, address, value)
+    return struct.pack('>HH', address, amount)
+
+
+def write_multiple_coils(db: BaseDataSource, unit_id: int, msg: MODBUSTCPMessage) -> bytes:
+    address, amount, databytes = struct.unpack('>HHB', msg.data[1:6])
+    target_db = amount // 8
+    if amount % 8:
+        target_db += 1
+    if target_db != databytes:
+        raise InvalidFrame('Mismatch between writing amount and no of bytes')
+    stream = BitConsumer(msg.data[6:])
+    for address, value in zip(range(address, address+amount), stream):
+        db.set_coil(unit_id, address, value)
+    return struct.pack('>HH', address, amount)
+
+
 TRANSLATION_TABLE = {
     0x03: (read_holding_registers, '>HH'),
     0x04: (read_analog_inputs, '>HH'),
@@ -55,6 +84,8 @@ TRANSLATION_TABLE = {
     0x02: (read_discrete_input, '>HH'),
     0x05: (write_single_coil, '>HH'),
     0x06: (write_single_register, '>HH'),
+    0x10: (write_multiple_registers, None),
+    0x0F: (write_multiple_coils, None)
 }
 
 
@@ -71,10 +102,24 @@ class ModbusProcessor:
         return self.struct_cache[str_]
 
     def process(self, msg: MODBUSTCPMessage) -> MODBUSTCPMessage:
+        """
+        :raises InvalidFrame: invalid data frame
+        """
         try:
             proc_fun, str_ = TRANSLATION_TABLE[msg.data[0]]
-            st = self.get_struct(str_)
-            args = st.unpack(msg.data[1:])
-            return msg.respond(proc_fun(self.server.data_source, msg.unit_id, *args))
+            if str_ is not None:
+                st = self.get_struct(str_)
+                args = st.unpack(msg.data[1:])
+                return msg.respond(proc_fun(self.server.data_source, msg.unit_id, *args))
+            else:
+                return msg.respond(proc_fun(self.server.data_source, msg.unit_id, msg))
         except KeyError:
             return msg.respond(b'\x01', True)
+        except IllegalAddress:
+            return msg.respond(b'\x02', True)
+        except IllegalValue:
+            return msg.respond(b'\x03', True)
+        except GatewayTargetDeviceFailedToRespond:
+            return msg.respond(b'\x0B', True)
+        except GatewayPathUnavailable:
+            return msg.respond(b'\x0A', True)

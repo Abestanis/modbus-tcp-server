@@ -17,3 +17,22 @@ class BitStream:
         self.data[-1] = self.data[-1] | value
         self.pointer += 1
 
+
+class BitConsumer:
+    def __init__(self, data: bytes):
+        self.data = bytearray(data)
+        self.pointer = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> bool:
+        if not self.data:
+            raise StopIteration()
+        if self.pointer == 8:
+            del self.data[0]
+            self.pointer = 0
+        try:
+            return (self.data[0] >> self.pointer) & 1
+        finally:
+            self.pointer += 1

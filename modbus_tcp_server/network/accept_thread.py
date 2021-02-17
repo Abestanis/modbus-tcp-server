@@ -11,8 +11,7 @@ from ..processor import ModbusProcessor
 class AcceptThread(TerminableThread):
     def __init__(self, bind_ifc: str, bind_port: int,
                  data_source: tp.Optional[BaseDataSource] = None,
-                 backlog: int = 128,
-                 handling_class: tp.Type[ConnectionThread] = ConnectionThread,):
+                 backlog: int = 128):
         super().__init__()
         if data_source is None:
             data_source = TestingDataSource()
@@ -21,7 +20,6 @@ class AcceptThread(TerminableThread):
         self.socket.bind((bind_ifc, bind_port))
         self.backlog = backlog
         self.processor = ModbusProcessor(self)
-        self.handling_class = handling_class
 
     def prepare(self) -> None:
         self.socket.listen(self.backlog)
@@ -37,4 +35,4 @@ class AcceptThread(TerminableThread):
     @silence_excs(socket.timeout)
     def loop(self) -> None:
         sock, addr = self.socket.accept()
-        self.handling_class(sock, addr, self).start()
+        ConnectionThread(sock, addr, self).start()

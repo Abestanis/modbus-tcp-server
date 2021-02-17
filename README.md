@@ -1,9 +1,9 @@
 # modbus-tcp-server
 
-[![PyPI](https://img.shields.io/pypi/pyversions/smok.svg)](https://pypi.python.org/pypi/smok)
-[![PyPI version](https://badge.fury.io/py/smok.svg)](https://badge.fury.io/py/smok)
-[![PyPI](https://img.shields.io/pypi/implementation/smok.svg)](https://pypi.python.org/pypi/smok)
-[![Wheel](https://img.shields.io/pypi/wheel/smok.svg)](https://pypi.org/project/smok/)
+[![PyPI](https://img.shields.io/pypi/pyversions/modbus-tcp-server.svg)](https://pypi.python.org/pypi/modbus-tcp-server)
+[![PyPI version](https://badge.fury.io/py/modbus-tcp-server.svg)](https://badge.fury.io/py/modbus-tcp-server)
+[![PyPI](https://img.shields.io/pypi/implementation/modbus-tcp-server.svg)](https://pypi.python.org/pypi/modbus-tcp-server)
+[![Wheel](https://img.shields.io/pypi/wheel/modbus-tcp-server.svg)](https://pypi.org/project/modbus-tcp-server/)
 
 
 A thread-based MODBUS TCP server for testing purposes.
@@ -26,12 +26,16 @@ Just run it without any arguments to see the command line.
 
 # Limitations
 
-So far commands 15 (Force Multiple Coils) 
-and 16 (Preset Multiple Registers) are unsupported.
+It does only the commands related to reading and writing
+analog inputs, discrete inputs, holding registers and coils,
+so only commands 1-6 and 15-16 are supported.
 
-# Custom usage
+Also, it spawns a thread per a client. This might be unacceptable to you,
+however it can also with with gevent.
 
-To implement a custom provider ModbusTCPServer, just extend
+# Custom data provider
+
+To implement a custom data provider, just extend
 [BaseDataSource](modbus_tcp_server/data_source/base.py) 
 to provide data of your choosing and launch it that way: 
 
@@ -46,3 +50,15 @@ c_db = CustomDB()
 
 at = AcceptThread('0.0.0.0', 502, c_db).start()
 ```
+
+Note that since everything is handled in a single thread, 
+if your reads or writes take too long this will hang on them.
+File a Issue if you've got a problem with that.
+
+# Change log
+
+## v0.2
+
+* added support for commands 15 and 16
+* added exceptions `GatewayPathUnavailable` and
+    `GatewayTargetDeviceFailedToRespond`
