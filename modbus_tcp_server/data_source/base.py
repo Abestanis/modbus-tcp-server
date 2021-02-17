@@ -9,6 +9,7 @@ class BaseDataSource(metaclass=ABCMeta):
     def get_holding_register(self, unit_id: int, address: int) -> int:
         """
         :raises IllegalAddress: address was illegal
+        :raises IllegalValue: value was illegal
         :raises GatewayTargetDeviceFailedToRespond: gateway target device failed to respond
         :raises GatewayPathUnavailable: gateway path unavailable
         """
@@ -17,6 +18,7 @@ class BaseDataSource(metaclass=ABCMeta):
     def get_analog_input(self, unit_id: int, address: int) -> int:
         """
         :raises IllegalAddress: address was illegal
+        :raises IllegalValue: value was illegal
         :raises GatewayTargetDeviceFailedToRespond: gateway target device failed to respond
         :raises GatewayPathUnavailable: gateway path unavailable
         """
@@ -25,6 +27,7 @@ class BaseDataSource(metaclass=ABCMeta):
     def get_discrete_input(self, unit_id: int, address: int) -> bool:
         """
         :raises IllegalAddress: address was illegal
+        :raises IllegalValue: value was illegal
         :raises GatewayTargetDeviceFailedToRespond: gateway target device failed to respond
         :raises GatewayPathUnavailable: gateway path unavailable
         """
@@ -33,6 +36,7 @@ class BaseDataSource(metaclass=ABCMeta):
     def get_coil(self, unit_id: int, address: int) -> bool:
         """
         :raises IllegalAddress: address was illegal
+        :raises IllegalValue: value was illegal
         :raises GatewayTargetDeviceFailedToRespond: gateway target device failed to respond
         :raises GatewayPathUnavailable: gateway path unavailable
         """
