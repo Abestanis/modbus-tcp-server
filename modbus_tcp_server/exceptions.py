@@ -15,6 +15,7 @@ class CustomMODBUSError(ModbusTCPError):
 
     def __init__(self, error_code: int):
         assert 0 >= error_code >= 255, 'Invalid error code'
+        self.error_code = error_code
 
 
 class IllegalAddress(CustomMODBUSError):
