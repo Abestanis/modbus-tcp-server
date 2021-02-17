@@ -15,10 +15,6 @@ class MODBUSTCPMessage:
         self.unit_id = unit_id
         self.data = data
 
-    def __repr__(self):
-        return 'ModbusTCPMessage(TID=%s, UID=%s, data=%s)' % (
-        self.tid, self.unit_id, repr(self.data))
-
     def __bytes__(self):
         return STRUCT_HDR.pack(self.tid, self.pid, len(self.data) + 1, self.unit_id) + self.data
 
