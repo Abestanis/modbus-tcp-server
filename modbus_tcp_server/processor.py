@@ -1,5 +1,4 @@
 import struct
-import weakref
 
 from satella.coding import rethrow_as
 
@@ -94,14 +93,10 @@ TRANSLATION_TABLE = {
 
 
 class ModbusProcessor:
-    __slots__ = ('server',)
+    __slots__ = ('data_source',)
 
-    def __init__(self, server):
-        self.server = weakref.proxy(server)
-
-    @property
-    def data_source(self) -> BaseDataSource:
-        return self.server.data_source
+    def __init__(self, data_source):
+        self.data_source = data_source
 
     def process(self, msg: MODBUSTCPMessage) -> MODBUSTCPMessage:
         """

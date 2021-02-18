@@ -21,7 +21,7 @@ class ModbusTCPServer(TerminableThread):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.bind((bind_ifc, bind_port))
         self.backlog = backlog
-        self.processor = ModbusProcessor(self)
+        self.processor = ModbusProcessor(data_source)
 
     def prepare(self) -> None:
         self.socket.listen(self.backlog)
