@@ -13,7 +13,8 @@ STRUCT_HH = struct.Struct('>HH')
 STRUCT_HHB = struct.Struct('>HHB')
 
 
-def read_holding_registers(db: BaseDataSource, unit_id: int, address_start: int, amount: int):
+def read_holding_registers(db: BaseDataSource, unit_id: int,
+                           address_start: int, amount: int) -> bytes:
     output = []
     for address in range(address_start, address_start + amount):
         output.append(db.get_holding_register(unit_id, address))
@@ -21,7 +22,7 @@ def read_holding_registers(db: BaseDataSource, unit_id: int, address_start: int,
     return struct.pack('>H' + ('H' * output_len), output_len * 2, *output)
 
 
-def read_analog_inputs(db: BaseDataSource, unit_id: int, address_start: int, amount: int):
+def read_analog_inputs(db: BaseDataSource, unit_id: int, address_start: int, amount: int) -> bytes:
     output = []
     for address in range(address_start, address_start + amount):
         output.append(db.get_analog_input(unit_id, address))
@@ -29,14 +30,14 @@ def read_analog_inputs(db: BaseDataSource, unit_id: int, address_start: int, amo
     return struct.pack('>H' + ('H' * output_len), output_len * 2, *output)
 
 
-def read_coil(db: BaseDataSource, unit_id: int, address_start: int, amount: int):
+def read_coil(db: BaseDataSource, unit_id: int, address_start: int, amount: int) -> bytes:
     bs = BitStream()
     for address in range(address_start, address_start + amount):
         bs.add(db.get_coil(unit_id, address))
     return bytes([len(bs)]) + bytes(bs)
 
 
-def read_discrete_input(db: BaseDataSource, unit_id: int, address_start: int, amount: int):
+def read_discrete_input(db: BaseDataSource, unit_id: int, address_start: int, amount: int) -> bytes:
     bs = BitStream()
     for address in range(address_start, address_start + amount):
         bs.add(db.get_discrete_input(unit_id, address))
@@ -79,6 +80,8 @@ def write_multiple_coils(db: BaseDataSource, unit_id: int, msg: MODBUSTCPMessage
 
 
 TRANSLATION_TABLE = {
+    # Either provide a struct to deserialize your arguments, or
+    # a None in order to pass ModbusTCPMessage as argument
     0x03: (read_holding_registers, STRUCT_HH),
     0x04: (read_analog_inputs, STRUCT_HH),
     0x01: (read_coil, STRUCT_HH),
@@ -91,7 +94,7 @@ TRANSLATION_TABLE = {
 
 
 class ModbusProcessor:
-    __slots__ = ('server', 'struct_cache')
+    __slots__ = ('server',)
 
     def __init__(self, server):
         self.server = weakref.proxy(server)

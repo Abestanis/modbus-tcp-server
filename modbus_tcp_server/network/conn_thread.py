@@ -24,11 +24,11 @@ class ConnectionThread(TerminableThread):
         self.buffer = bytearray()
         self.last_activity = time.monotonic()
 
-    def cleanup(self):
+    def cleanup(self) -> None:
         self.socket.close()
 
     @silence_excs(socket.timeout)
-    def loop(self):
+    def loop(self) -> None:
         # Check for termination conditions
         # noinspection PyProtectedMember
         if self.server._terminating:

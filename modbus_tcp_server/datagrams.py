@@ -15,7 +15,7 @@ class MODBUSTCPMessage:
         self.unit_id = unit_id
         self.data = data
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return STRUCT_HDR.pack(self.tid, self.pid, len(self.data) + 1, self.unit_id) + self.data
 
     def __len__(self) -> int:
@@ -23,7 +23,7 @@ class MODBUSTCPMessage:
 
     @classmethod
     @rethrow_as((IndexError, struct.error), ValueError)
-    def from_bytes(cls, d: bytes):
+    def from_bytes(cls, d: bytes) -> 'MODBUSTCPMessage':
         tid, pid, length, uid = STRUCT_HDR.unpack(d[:SHDR_SIZE])
         if pid != 0x00:
             raise InvalidFrame('Protocol ID not 0')

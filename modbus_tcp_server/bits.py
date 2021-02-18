@@ -1,15 +1,17 @@
 class BitStream:
+    __slots__ = ('data', 'pointer')
+
     def __init__(self):
         self.pointer = 0
         self.data = bytearray()
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.data)
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return bytes(self.data)
 
-    def add(self, bit: bool):
+    def add(self, bit: bool) -> None:
         ptr = self.pointer % 8
         value = 1 << ptr if bit else 0
         if not ptr:
@@ -19,6 +21,8 @@ class BitStream:
 
 
 class BitConsumer:
+    __slots__ = ('data', 'pointer')
+
     def __init__(self, data: bytes):
         self.data = bytearray(data)
         self.pointer = 0
