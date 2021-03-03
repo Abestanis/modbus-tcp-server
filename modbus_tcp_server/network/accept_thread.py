@@ -14,7 +14,7 @@ class ModbusTCPServer(TerminableThread):
     def __init__(self, bind_ifc: str, bind_port: int,
                  data_source: tp.Optional[BaseDataSource] = None,
                  backlog: int = 128):
-        super().__init__()
+        super().__init__(name='accept')
         if data_source is None:
             data_source = TestingDataSource()
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
