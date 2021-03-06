@@ -19,10 +19,15 @@ pip install modbus-tcp-server
 And to run it
 
 ```bash
-modbus-tcp-server 127.0.0.1
+modbus-tcp-server 127.0.0.1 502
 ```
 
+Port is optional, it will be assumed to be 502 by default.
+
 Just run it without any arguments to see the command line.
+
+If you want verbosity, you can drop `-v` or `-vv` after providing port number.
+Note that in this case giving port number is mandatory.
 
 # Limitations
 
