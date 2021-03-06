@@ -18,7 +18,7 @@ def read_holding_registers(db: BaseDataSource, unit_id: int,
     for address in range(address_start, address_start + amount):
         output.append(db.get_holding_register(unit_id, address))
     output_len = len(output)
-    return struct.pack('>H' + ('H' * output_len), output_len * 2, *output)
+    return struct.pack('>B' + ('H' * output_len), output_len * 2, *output)
 
 
 def read_analog_inputs(db: BaseDataSource, unit_id: int, address_start: int, amount: int) -> bytes:
@@ -26,7 +26,7 @@ def read_analog_inputs(db: BaseDataSource, unit_id: int, address_start: int, amo
     for address in range(address_start, address_start + amount):
         output.append(db.get_analog_input(unit_id, address))
     output_len = len(output)
-    return struct.pack('>H' + ('H' * output_len), output_len * 2, *output)
+    return struct.pack('>B' + ('H' * output_len), output_len * 2, *output)
 
 
 def read_coil(db: BaseDataSource, unit_id: int, address_start: int, amount: int) -> bytes:
