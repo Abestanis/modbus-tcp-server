@@ -1,6 +1,6 @@
 import struct
 
-from satella.coding import rethrow_as
+from satella.coding import reraise_as
 
 from modbus_tcp_server.data_source import BaseDataSource
 from modbus_tcp_server.datagrams import MODBUSTCPMessage
@@ -58,7 +58,7 @@ def write_multiple_registers(db: BaseDataSource, unit_id: int, msg: MODBUSTCPMes
     if databytes != 2 * amount:
         raise InvalidFrame('Mismatch between writing amount and no of bytes')
 
-    with rethrow_as(struct.error, InvalidFrame):
+    with reraise_as(struct.error, InvalidFrame):
         for address, value in zip(range(address, address + amount),
                                   struct.unpack('>' + ('H' * amount), reg_data)):
             db.set_holding_register(unit_id, address, value)

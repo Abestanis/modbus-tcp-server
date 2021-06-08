@@ -1,6 +1,6 @@
 import struct
 
-from satella.coding import rethrow_as
+from satella.coding import reraise_as
 
 from .exceptions import InvalidFrame
 
@@ -22,7 +22,7 @@ class MODBUSTCPMessage:
         return SHDR_SIZE + len(self.data)
 
     @classmethod
-    @rethrow_as((IndexError, struct.error), ValueError)
+    @reraise_as((IndexError, struct.error), ValueError)
     def from_bytes(cls, d: bytes) -> 'MODBUSTCPMessage':
         tid, pid, length, uid = STRUCT_HDR.unpack(d[:SHDR_SIZE])
         if pid != 0x00:
