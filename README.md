@@ -64,9 +64,9 @@ File a Issue if you've got a problem with that.
 
 # Change log
 
-## v0.5
+## v0.6
 
-* _TBA_
+* made logging received data log level debug
 
 ## v0.4
 

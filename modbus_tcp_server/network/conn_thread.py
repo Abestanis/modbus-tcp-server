@@ -40,7 +40,7 @@ class ConnectionThread(TerminableThread):
         data = self.socket.recv(128)
         if not data:
             raise socket.error()
-        logger.info('Received %s', repr(data))
+        logger.debug('Received %s', repr(data))
         self.buffer.extend(data)
 
         # Extract MODBUS packets
