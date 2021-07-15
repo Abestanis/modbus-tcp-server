@@ -4,7 +4,7 @@
 [![PyPI version](https://badge.fury.io/py/modbus-tcp-server.svg)](https://badge.fury.io/py/modbus-tcp-server)
 [![PyPI](https://img.shields.io/pypi/implementation/modbus-tcp-server.svg)](https://pypi.python.org/pypi/modbus-tcp-server)
 [![Wheel](https://img.shields.io/pypi/wheel/modbus-tcp-server.svg)](https://pypi.org/project/modbus-tcp-server/)
-
+[![License](https://img.shields.io/pypi/l/smok)](https://github.com/smok-serwis/modbus-tcp-server)
 
 A thread-based MODBUS TCP server for testing purposes.
 
@@ -67,6 +67,7 @@ File a Issue if you've got a problem with that.
 ## v0.6
 
 * made logging received data log level debug
+* socket will be opened with SO_REUSEADDR
 
 ## v0.4
 

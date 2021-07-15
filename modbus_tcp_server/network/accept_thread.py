@@ -18,6 +18,7 @@ class ModbusTCPServer(TerminableThread):
         if data_source is None:
             data_source = TestingDataSource()
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((bind_ifc, bind_port))
         self.backlog = backlog
         self.processor = ModbusProcessor(data_source)
