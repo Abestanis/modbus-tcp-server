@@ -54,7 +54,8 @@ def write_single_register(db: BaseDataSource, unit_id: int, address: int, value:
 
 
 def write_multiple_registers(db: BaseDataSource, unit_id: int, msg: MODBUSTCPMessage) -> bytes:
-    address, amount, databytes, reg_data = STRUCT_HHB.unpack(msg.data[1:6]), msg.data[6:]
+    address, amount, databytes = STRUCT_HHB.unpack(msg.data[1:6])
+    reg_data = msg.data[6:]
     if databytes != 2 * amount:
         raise InvalidFrame('Mismatch between writing amount and no of bytes')
 
